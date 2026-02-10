@@ -22,7 +22,7 @@ app.use('*', errorHandler);
 app.use(
     '*',
     cors({
-        origin: ['http://localhost:5173', 'http://localhost:3000'],
+        origin: ['http://localhost:5173', 'https://swades-ai-technical-assessment-web.vercel.app'],
         allowHeaders: ['Content-Type', 'Authorization'],
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         exposeHeaders: [
