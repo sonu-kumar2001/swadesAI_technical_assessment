@@ -1,5 +1,11 @@
 {
     "$schema": "https://turbo.build/schema.json",
+    "globalEnv": [
+        "DATABASE_URL",
+        "OPENAI_API_KEY",
+        "PORT",
+        "NODE_ENV"
+    ],
     "tasks": {
         "dev": {
             "cache": false,

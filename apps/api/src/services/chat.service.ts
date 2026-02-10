@@ -1,5 +1,7 @@
 import { prisma } from '../lib/prisma.js';
-import type { MessageRole } from '@prisma/client';
+import type { Prisma, Conversation, Message } from '@prisma/client';
+
+type MessageRole = Message['role'];
 
 /**
  * Chat Service
@@ -51,7 +53,7 @@ export async function listConversations(
     ]);
 
     return {
-        conversations: conversations.map((c) => ({
+        conversations: conversations.map((c: typeof conversations[number]) => ({
             id: c.id,
             title: c.title,
             status: c.status,

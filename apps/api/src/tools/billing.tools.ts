@@ -91,7 +91,7 @@ export const checkRefundStatus = tool({
             }
 
             // Add human-readable status messages
-            const refundsWithMessages = refunds.map((r) => {
+            const refundsWithMessages = refunds.map((r: typeof refunds[number]) => {
                 const statusMessages: Record<string, string> = {
                     requested: 'Your refund request has been received and is awaiting review.',
                     processing: 'Your refund is being processed. This typically takes 3-5 business days.',

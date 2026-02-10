@@ -40,7 +40,7 @@ export async function processMessage(
 
     // 3. Load conversation history
     const dbMessages = await chatService.getMessages(conversation.id);
-    const historyForContext = dbMessages.map((m) => ({
+    const historyForContext = dbMessages.map((m: { role: string; content: string }) => ({
         role: m.role,
         content: m.content,
     }));
@@ -48,7 +48,7 @@ export async function processMessage(
     // 4. Prepare context summary for router (last few messages)
     const recentContext = historyForContext
         .slice(-6)
-        .map((m) => `${m.role}: ${m.content}`)
+        .map((m: { role: string; content: string }) => `${m.role}: ${m.content}`)
         .join('\n');
 
     // 5. Classify intent
