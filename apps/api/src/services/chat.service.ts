@@ -1,7 +1,6 @@
 import { prisma } from '../lib/prisma.js';
-import type { Prisma, Conversation, Message } from '@prisma/client';
 
-type MessageRole = Message['role'];
+type MessageRole = 'user' | 'assistant' | 'system' | 'tool';
 
 /**
  * Chat Service
