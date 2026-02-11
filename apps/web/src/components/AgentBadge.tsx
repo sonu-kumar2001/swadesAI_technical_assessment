@@ -1,4 +1,6 @@
 import React from 'react';
+import { AGENTS } from '@repo/shared';
+import './AgentBadge.css';
 
 interface AgentBadgeProps {
     type: string;

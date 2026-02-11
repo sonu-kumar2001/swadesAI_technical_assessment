@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import './MessageInput.css';
 
 interface MessageInputProps {
     onSend: (message: string) => void;

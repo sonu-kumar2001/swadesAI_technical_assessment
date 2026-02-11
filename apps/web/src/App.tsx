@@ -19,8 +19,8 @@ function App() {
     const handleConversationCreated = useCallback(
         (newId: string) => {
             setActiveConversationId(newId);
-            // Refresh the list to show the new conversation
-            setTimeout(() => fetchConversations(), 500);
+            // Refresh the list immediately
+            fetchConversations();
         },
         [fetchConversations]
     );
@@ -93,7 +93,7 @@ function App() {
         async (message: string) => {
             await sendMessage(message);
             // Refresh conversation list after sending
-            setTimeout(() => fetchConversations(), 1000);
+            fetchConversations();
         },
         [sendMessage, fetchConversations]
     );

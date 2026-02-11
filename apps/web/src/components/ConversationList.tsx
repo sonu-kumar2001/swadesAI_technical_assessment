@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ConversationListItem } from '@repo/shared';
 import { AgentBadge } from './AgentBadge';
+import './ConversationList.css';
 
 interface ConversationListProps {
     conversations: ConversationListItem[];

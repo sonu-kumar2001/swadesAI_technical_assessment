@@ -4,9 +4,7 @@ import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler.js';
 import { logger } from './middleware/logger.js';
 import { rateLimiter } from './middleware/rate-limiter.js';
-import { chatRoutes } from './routes/chat.routes.js';
-import { agentRoutes } from './routes/agent.routes.js';
-import { healthRoutes } from './routes/health.routes.js';
+import { chatRoutes, agentRoutes, healthRoutes } from './routes/index.js';
 import { RATE_LIMITS } from '@repo/shared';
 
 // ========================

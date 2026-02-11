@@ -1,0 +1,174 @@
+/* ========================
+   Sidebar
+   ======================== */
+.sidebar {
+    width: 300px;
+    min-width: 300px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.sidebar-header {
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.sidebar-header h1 {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-1);
+}
+
+.sidebar-header p {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+}
+
+.new-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--accent-blue-soft);
+    color: var(--accent-blue);
+    border: 1px solid rgba(79, 142, 255, 0.2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    font-family: var(--font-family);
+    transition: all var(--transition-fast);
+}
+
+.new-chat-btn:hover {
+    background: rgba(79, 142, 255, 0.2);
+    border-color: rgba(79, 142, 255, 0.35);
+}
+
+/* Conversation List */
+.conversation-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-3);
+}
+
+.conversation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-1);
+    border: 1px solid transparent;
+}
+
+.conversation-item:hover {
+    background: var(--bg-hover);
+}
+
+.conversation-item.active {
+    background: var(--bg-active);
+    border-color: var(--border);
+}
+
+.conversation-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversation-item-title {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.conversation-item-preview {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.conversation-item-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+}
+
+.conversation-delete-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-sm);
+}
+
+.conversation-item:hover .conversation-delete-btn {
+    opacity: 1;
+}
+
+.conversation-delete-btn:hover {
+    color: var(--accent-red);
+    background: var(--accent-red-soft);
+}
+
+/* User Selector */
+.user-selector {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.user-selector label {
+    display: block;
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.user-selector select {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+.user-selector select:focus {
+    border-color: var(--accent-blue);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}

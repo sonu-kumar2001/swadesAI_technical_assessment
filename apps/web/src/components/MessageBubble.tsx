@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import './MessageBubble.css';
 import { AgentBadge } from './AgentBadge';
 import type { ChatMessageUI } from '../hooks/useChat';
 

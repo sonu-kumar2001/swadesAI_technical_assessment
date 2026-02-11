@@ -1,0 +1,34 @@
+/* ========================
+   Agent Badge
+   ======================== */
+.agent-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.agent-badge.support {
+    background: var(--accent-green-soft);
+    color: var(--agent-support);
+}
+
+.agent-badge.order {
+    background: var(--accent-blue-soft);
+    color: var(--agent-order);
+}
+
+.agent-badge.billing {
+    background: var(--accent-amber-soft);
+    color: var(--agent-billing);
+}
+
+.agent-badge.router {
+    background: var(--accent-purple-soft);
+    color: var(--agent-router);
+}

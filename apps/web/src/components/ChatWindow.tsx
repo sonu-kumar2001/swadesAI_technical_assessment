@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
 import { TypingIndicator } from './TypingIndicator';
+import { AgentBadge } from './AgentBadge';
+import './ChatWindow.css';
 import type { ChatMessageUI } from '../hooks/useChat';
 
 interface ChatWindowProps {
