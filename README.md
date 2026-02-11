@@ -50,6 +50,11 @@ This monorepo uses Turborepo to manage the backend API and frontend web applicat
     -   **Frontend**: [http://localhost:5173](http://localhost:5173) (or 5174 if port in use)
     -   **Backend**: [http://localhost:3001](http://localhost:3001)
 
+5. **Run test**
+```bash
+pnpm test
+```
+
 ## 📂 Project Structure
 
 ```
@@ -95,3 +100,4 @@ swadesAI_technical_assessment/
 | `GET` | `/api/chat/conversations/:id` | Get conversation history |
 | `GET` | `/api/agents` | List available agents |
 | `GET` | `/api/health` | System health check |
+
