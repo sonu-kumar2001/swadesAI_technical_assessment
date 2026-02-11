@@ -1,12 +1,12 @@
-import { generateObject } from 'ai';
-import { z } from 'zod';
-import { ROUTER_MODEL } from '../lib/ai.js';
-import type { IntentClassification } from '@repo/shared';
+import { generateObject } from "ai";
+import { z } from "zod";
+import { ROUTER_MODEL } from "../lib/ai.js";
+import type { IntentClassification } from "@repo/shared";
 
 const intentSchema = z.object({
-    intent: z.enum(['support', 'order', 'billing', 'general']),
-    confidence: z.number().min(0).max(1),
-    reasoning: z.string(),
+  intent: z.enum(["support", "order", "billing", "general"]),
+  confidence: z.number().min(0).max(1),
+  reasoning: z.string(),
 });
 
 const ROUTER_SYSTEM_PROMPT = `You are a customer support intent classifier. Analyze the user's message and classify it into one of the following categories.
@@ -30,29 +30,29 @@ Guidelines:
  * This is faster and cheaper than a full streaming response for classification.
  */
 export async function classifyIntent(
-    userMessage: string,
-    conversationContext?: string
+  userMessage: string,
+  conversationContext?: string,
 ): Promise<IntentClassification> {
-    try {
-        const prompt = conversationContext
-            ? `Previous conversation context:\n${conversationContext}\n\nNew user message: "${userMessage}"`
-            : `User message: "${userMessage}"`;
+  try {
+    const prompt = conversationContext
+      ? `Previous conversation context:\n${conversationContext}\n\nNew user message: "${userMessage}"`
+      : `User message: "${userMessage}"`;
 
-        const { object } = await generateObject({
-            model: ROUTER_MODEL,
-            schema: intentSchema,
-            system: ROUTER_SYSTEM_PROMPT,
-            prompt,
-        });
+    const { object } = await generateObject({
+      model: ROUTER_MODEL,
+      schema: intentSchema,
+      system: ROUTER_SYSTEM_PROMPT,
+      prompt,
+    });
 
-        return object;
-    } catch (error) {
-        console.error('[RouterAgent] Classification failed:', error);
-        // Fallback to "general" on error
-        return {
-            intent: 'general',
-            confidence: 0.3,
-            reasoning: 'Classification failed, defaulting to general support.',
-        };
-    }
+    return object;
+  } catch (error) {
+    console.error("[RouterAgent] Classification failed:", error);
+    // Fallback to "general" on error
+    return {
+      intent: "general",
+      confidence: 0.3,
+      reasoning: "Classification failed, defaulting to general support.",
+    };
+  }
 }

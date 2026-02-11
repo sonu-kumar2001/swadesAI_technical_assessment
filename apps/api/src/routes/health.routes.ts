@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma.js';
 
 const healthRoutes = new Hono();
 
-healthRoutes.get('/', async (c) => {
+healthRoutes.get('/health', async (c) => {
     let dbStatus = 'disconnected';
 
     try {

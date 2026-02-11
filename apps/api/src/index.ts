@@ -4,7 +4,7 @@ import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler.js';
 import { logger } from './middleware/logger.js';
 import { rateLimiter } from './middleware/rate-limiter.js';
-import { chatRoutes, agentRoutes, healthRoutes } from './routes/index.js';
+import { Routes } from './routes/index.js';
 import { RATE_LIMITS } from '@repo/shared';
 
 // ========================
@@ -43,9 +43,7 @@ app.use('/api/*', rateLimiter(RATE_LIMITS.GENERAL.maxRequests, RATE_LIMITS.GENER
 // ========================
 // Routes
 // ========================
-app.route('/api/chat', chatRoutes);
-app.route('/api/agents', agentRoutes);
-app.route('/api/health', healthRoutes);
+app.route('/api', Routes);
 
 // Root
 app.get('/', (c) =>
