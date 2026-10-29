@@ -8,7 +8,9 @@
     border-right: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
+    min-height: 0;
+    flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -167,8 +169,97 @@
     border-color: var(--accent-blue);
 }
 
+.sidebar-backdrop {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .sidebar {
-        display: none;
+        position: fixed;
+        top: var(--mobile-chat-header-height);
+        bottom: 0;
+        left: 0;
+        z-index: var(--z-mobile-drawer);
+        display: flex;
+        width: min(86vw, 320px);
+        min-width: 0;
+        height: auto;
+        visibility: hidden;
+        transform: translateX(calc(-100% - 8px));
+        box-shadow: 6px 0 8px rgba(0, 0, 0, 0.32);
+        transition:
+            transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0s linear 240ms;
+        will-change: transform;
+    }
+
+    .sidebar.sidebar-open {
+        visibility: visible;
+        transform: translateX(0);
+        transition-delay: 0s;
+    }
+
+    .sidebar-header {
+        padding: var(--space-4);
+    }
+
+    .conversation-list {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .conversation-item {
+        min-height: 68px;
+        padding-right: var(--space-2);
+    }
+
+    .conversation-delete-btn {
+        width: 36px;
+        height: 36px;
+        opacity: 1;
+    }
+
+    .user-selector {
+        padding-right: var(--space-4);
+        padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+        padding-left: var(--space-4);
+        background: var(--bg-secondary);
+    }
+
+    .user-selector select {
+        min-height: 44px;
+    }
+
+    .sidebar-backdrop {
+        position: fixed;
+        top: var(--mobile-chat-header-height);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: var(--z-mobile-backdrop);
+        display: block;
+        padding: 0;
+        border: 0;
+        background: rgba(3, 3, 8, 0.62);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity 200ms ease-out,
+            visibility 0s linear 200ms;
+    }
+
+    .sidebar-backdrop.visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition-delay: 0s;
+    }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar-backdrop {
+        transition-duration: 1ms;
     }
 }

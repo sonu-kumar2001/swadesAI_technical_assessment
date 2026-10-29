@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ConversationList } from './components/ConversationList';
 import { ChatWindow } from './components/ChatWindow';
 import { useChat } from './hooks/useChat';
@@ -8,6 +8,37 @@ function App() {
     const [userId, setUserId] = useState('user-001');
     const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
     const [activeTitle, setActiveTitle] = useState<string | null>(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const closeSidebar = useCallback(() => {
+        setIsSidebarOpen(false);
+
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            window.requestAnimationFrame(() => {
+                document.getElementById('mobile-conversation-menu-toggle')?.focus();
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!isSidebarOpen) return;
+
+        const focusFrame = window.requestAnimationFrame(() => {
+            document
+                .querySelector<HTMLElement>('[data-sidebar-initial-focus]')
+                ?.focus();
+        });
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') closeSidebar();
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.cancelAnimationFrame(focusFrame);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isSidebarOpen, closeSidebar]);
 
     const {
         conversations,
@@ -44,6 +75,7 @@ function App() {
 
     const handleSelectConversation = useCallback(
         async (id: string) => {
+            closeSidebar();
             if (id === activeConversationId) return;
             setActiveConversationId(id);
             const conv = await loadConversation(id);
@@ -60,14 +92,15 @@ function App() {
                 );
             }
         },
-        [activeConversationId, loadConversation, loadMessages]
+        [activeConversationId, loadConversation, loadMessages, closeSidebar]
     );
 
     const handleNewChat = useCallback(() => {
         setActiveConversationId(null);
         setActiveTitle(null);
         clearMessages();
-    }, [clearMessages]);
+        closeSidebar();
+    }, [clearMessages, closeSidebar]);
 
     const handleDeleteConversation = useCallback(
         async (id: string) => {
@@ -85,8 +118,9 @@ function App() {
             setActiveConversationId(null);
             setActiveTitle(null);
             clearMessages();
+            closeSidebar();
         },
-        [clearMessages]
+        [clearMessages, closeSidebar]
     );
 
     const handleSend = useCallback(
@@ -108,6 +142,13 @@ function App() {
                 onNewChat={handleNewChat}
                 userId={userId}
                 onUserChange={handleUserChange}
+                isOpen={isSidebarOpen}
+            />
+            <button
+                className={`sidebar-backdrop ${isSidebarOpen ? 'visible' : ''}`}
+                onClick={closeSidebar}
+                aria-label="Close conversation menu"
+                tabIndex={isSidebarOpen ? 0 : -1}
             />
             <ChatWindow
                 messages={messages}
@@ -119,6 +160,8 @@ function App() {
                 onSend={handleSend}
                 onClearError={clearError}
                 conversationTitle={activeTitle}
+                isSidebarOpen={isSidebarOpen}
+                onToggleSidebar={() => setIsSidebarOpen((isOpen) => !isOpen)}
             />
         </div>
     );

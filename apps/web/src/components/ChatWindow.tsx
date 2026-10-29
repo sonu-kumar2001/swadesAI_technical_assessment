@@ -16,6 +16,8 @@ interface ChatWindowProps {
     onSend: (message: string) => void;
     onClearError: () => void;
     conversationTitle?: string | null;
+    isSidebarOpen: boolean;
+    onToggleSidebar: () => void;
 }
 
 const SUGGESTIONS = [
@@ -37,6 +39,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     onSend,
     onClearError,
     conversationTitle,
+    isSidebarOpen,
+    onToggleSidebar,
 }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +52,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     return (
         <main className="chat-area">
             <div className="chat-header">
-                <div>
+                <button
+                    id="mobile-conversation-menu-toggle"
+                    className={`mobile-menu-btn ${isSidebarOpen ? 'open' : ''}`}
+                    onClick={onToggleSidebar}
+                    aria-label={isSidebarOpen ? 'Close conversation menu' : 'Open conversation menu'}
+                    aria-expanded={isSidebarOpen}
+                    aria-controls="conversation-sidebar"
+                >
+                    <span className="mobile-menu-icon" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                    </span>
+                </button>
+                <div className="chat-header-copy">
                     <div className="chat-header-title">
                         {conversationTitle || 'New Conversation'}
                     </div>

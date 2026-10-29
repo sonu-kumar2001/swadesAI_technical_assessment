@@ -11,6 +11,7 @@ interface ConversationListProps {
     onNewChat: () => void;
     userId: string;
     onUserChange: (id: string) => void;
+    isOpen: boolean;
 }
 
 const DEMO_USERS = [
@@ -27,13 +28,22 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     onNewChat,
     userId,
     onUserChange,
+    isOpen,
 }) => {
     return (
-        <aside className="sidebar">
+        <aside
+            id="conversation-sidebar"
+            className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}
+            aria-label="Conversation history"
+        >
             <div className="sidebar-header">
                 <h1>AI Support</h1>
                 <p>Multi-Agent Customer Support</p>
-                <button className="new-chat-btn" onClick={onNewChat}>
+                <button
+                    className="new-chat-btn"
+                    onClick={onNewChat}
+                    data-sidebar-initial-focus
+                >
                     ＋ New Conversation
                 </button>
             </div>

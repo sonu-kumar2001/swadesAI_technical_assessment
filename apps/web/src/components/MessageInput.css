@@ -4,6 +4,7 @@
 .message-input-container {
     padding: var(--space-4) var(--space-8) var(--space-6);
     background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+    flex-shrink: 0;
 }
 
 .message-input-wrapper {
@@ -22,10 +23,12 @@
     color: var(--text-primary);
     font-family: var(--font-family);
     font-size: var(--font-size-base);
+    line-height: 1.5;
     outline: none;
     resize: none;
+    overflow-y: hidden;
     transition: all var(--transition-fast);
-    min-height: 52px;
+    min-height: 56px;
     max-height: 150px;
 }
 
@@ -75,6 +78,9 @@
 
 @media (max-width: 768px) {
     .message-input-container {
-        padding: var(--space-3) var(--space-4) var(--space-4);
+        padding-top: var(--space-3);
+        padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
+        padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+        padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
     }
 }

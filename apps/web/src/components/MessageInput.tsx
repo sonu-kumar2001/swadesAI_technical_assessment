@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './MessageInput.css';
 
+const MAX_TEXTAREA_HEIGHT = 150;
+
 interface MessageInputProps {
     onSend: (message: string) => void;
     isLoading: boolean;
@@ -17,6 +19,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading })
         setInput('');
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.overflowY = 'hidden';
         }
     };
 
@@ -29,10 +32,15 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading })
 
     // Auto-resize textarea
     useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
-        }
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        textarea.style.height = 'auto';
+        const borderHeight = textarea.offsetHeight - textarea.clientHeight;
+        const contentHeight = textarea.scrollHeight + borderHeight;
+
+        textarea.style.height = `${Math.min(contentHeight, MAX_TEXTAREA_HEIGHT)}px`;
+        textarea.style.overflowY = contentHeight > MAX_TEXTAREA_HEIGHT ? 'auto' : 'hidden';
     }, [input]);
 
     return (
@@ -44,7 +52,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading })
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask about your orders, billing, or anything else..."
+                    placeholder="Type your message…"
                     disabled={isLoading}
                     rows={1}
                 />
