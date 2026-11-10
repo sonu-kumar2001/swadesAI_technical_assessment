@@ -7,7 +7,7 @@ interface TypingIndicatorProps {
 
 export const TypingIndicator: React.FC<TypingIndicatorProps> = ({ text }) => {
     return (
-        <div className="typing-indicator">
+        <div className="typing-indicator" role="status" aria-live="polite">
             <div className="message-avatar" style={{ background: 'rgba(139, 92, 246, 0.12)', color: '#8b5cf6' }}>
                 AI
             </div>

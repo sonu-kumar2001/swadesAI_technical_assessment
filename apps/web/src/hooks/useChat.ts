@@ -33,6 +33,7 @@ export function useChat({
   const [messages, setMessages] = useState<ChatMessageUI[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentAgentType, setCurrentAgentType] = useState<string | null>(null);
   const [reasoningText, setReasoningText] = useState<string | null>(null);
@@ -56,6 +57,7 @@ export function useChat({
       };
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
+      setIsAwaitingResponse(true);
       setReasoningText(getRandomThinkingPhrase());
 
       try {
@@ -84,31 +86,21 @@ export function useChat({
         if (!response.body) throw new Error("No response body");
 
         setIsStreaming(true);
-
-        // Create a placeholder for the assistant message
         const assistantId = `temp-assistant-${Date.now()}`;
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: assistantId,
-            role: "assistant",
-            content: "",
-            agentType: agentType || undefined,
-            createdAt: new Date().toISOString(),
-          },
-        ]);
+        setIsAwaitingResponse(true);
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let fullText = "";
+        let pendingLine = "";
+        let assistantMessageCreated = false;
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          // Parse the Vercel AI SDK data stream format
-          const lines = chunk.split("\n");
+          const chunk = decoder.decode(value || new Uint8Array(), { stream: !done });
+          const parts = (pendingLine + chunk).split("\n");
+          pendingLine = done ? "" : parts.pop() || "";
+          const lines = done && parts.length ? [...parts, pendingLine] : parts;
 
           for (const line of lines) {
             if (!line.trim()) continue;
@@ -118,12 +110,21 @@ export function useChat({
               try {
                 const textContent = JSON.parse(line.slice(2));
                 fullText += textContent;
-                setMessages((prev) =>
-                  prev.map((m) =>
+                if (!assistantMessageCreated) {
+                  assistantMessageCreated = true;
+                  setIsAwaitingResponse(false);
+                  setMessages((prev) => [...prev, {
+                    id: assistantId,
+                    role: "assistant",
+                    content: fullText,
+                    agentType: agentType || undefined,
+                    createdAt: new Date().toISOString(),
+                  }]);
+                } else {
+                  setMessages((prev) => prev.map((m) =>
                     m.id === assistantId ? { ...m, content: fullText } : m,
-                  ),
-                );
-                // Clear reasoning once text starts flowing
+                  ));
+                }
                 setReasoningText(null);
               } catch {
                 // Ignore parse errors on partial chunks
@@ -170,6 +171,7 @@ export function useChat({
               }
             }
           }
+          if (done) break;
         }
 
         setReasoningText(null);
@@ -179,6 +181,7 @@ export function useChat({
           err instanceof Error ? err.message : "Failed to send message";
         setError(message);
         setReasoningText(null);
+        setIsAwaitingResponse(false);
 
         // Add error message to chat if it's an API limit error
         if (message === "api limit exceeded") {
@@ -202,6 +205,7 @@ export function useChat({
       } finally {
         setIsLoading(false);
         setIsStreaming(false);
+        setIsAwaitingResponse(false);
       }
     },
     [userId, conversationId, isLoading, onConversationCreated],
@@ -223,6 +227,7 @@ export function useChat({
     messages,
     isLoading,
     isStreaming,
+    isAwaitingResponse,
     error,
     currentAgentType,
     reasoningText,

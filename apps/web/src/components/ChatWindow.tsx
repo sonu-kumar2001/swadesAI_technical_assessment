@@ -9,7 +9,7 @@ import type { ChatMessageUI } from '../hooks/useChat';
 interface ChatWindowProps {
     messages: ChatMessageUI[];
     isLoading: boolean;
-    isStreaming: boolean;
+    isAwaitingResponse: boolean;
     error: string | null;
     reasoningText: string | null;
     currentAgentType: string | null;
@@ -18,6 +18,7 @@ interface ChatWindowProps {
     conversationTitle?: string | null;
     isSidebarOpen: boolean;
     onToggleSidebar: () => void;
+    isConversationLoading: boolean;
 }
 
 const SUGGESTIONS = [
@@ -32,7 +33,7 @@ const SUGGESTIONS = [
 export const ChatWindow: React.FC<ChatWindowProps> = ({
     messages,
     isLoading,
-    isStreaming,
+    isAwaitingResponse,
     error,
     reasoningText,
     currentAgentType,
@@ -41,6 +42,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     conversationTitle,
     isSidebarOpen,
     onToggleSidebar,
+    isConversationLoading,
 }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +81,12 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
             </div>
 
             <div className="messages-container">
-                {messages.length === 0 ? (
+                {isConversationLoading ? (
+                    <div className="chat-loading" role="status" aria-label="Loading conversation">
+                        <span className="large-spinner" aria-hidden="true" />
+                        <span>Loading conversation</span>
+                    </div>
+                ) : messages.length === 0 ? (
                     <div className="messages-empty">
                         <div className="messages-empty-icon">💬</div>
                         <h2>How can I help you?</h2>
@@ -107,17 +114,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                     </>
                 )}
 
-                {/* Reasoning display while agent thinks / calls tools */}
-                {reasoningText && !isStreaming && (
-                    <div className="reasoning-display">
-                        <span className="reasoning-icon">⚙</span>
-                        <span className="reasoning-text">{reasoningText}</span>
-                    </div>
-                )}
-
                 {/* Typing indicator while streaming */}
-                {isStreaming && !reasoningText && (
-                    <TypingIndicator />
+                {!isConversationLoading && isAwaitingResponse && (
+                    <TypingIndicator text={reasoningText} />
                 )}
 
                 {/* Error display */}

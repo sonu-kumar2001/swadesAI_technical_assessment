@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ConversationList } from './components/ConversationList';
 import { ChatWindow } from './components/ChatWindow';
 import { useChat } from './hooks/useChat';
@@ -9,6 +9,8 @@ function App() {
     const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
     const [activeTitle, setActiveTitle] = useState<string | null>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isConversationLoading, setIsConversationLoading] = useState(false);
+    const selectionRequestId = useRef(0);
 
     const closeSidebar = useCallback(() => {
         setIsSidebarOpen(false);
@@ -42,6 +44,8 @@ function App() {
 
     const {
         conversations,
+        isLoading: isConversationsLoading,
+        deletingIds,
         fetchConversations,
         removeConversation,
         loadConversation,
@@ -59,7 +63,7 @@ function App() {
     const {
         messages,
         isLoading,
-        isStreaming,
+        isAwaitingResponse,
         error,
         currentAgentType,
         reasoningText,
@@ -77,8 +81,11 @@ function App() {
         async (id: string) => {
             closeSidebar();
             if (id === activeConversationId) return;
+            const requestId = ++selectionRequestId.current;
             setActiveConversationId(id);
+            setIsConversationLoading(true);
             const conv = await loadConversation(id);
+            if (requestId !== selectionRequestId.current) return;
             if (conv) {
                 setActiveTitle(conv.title);
                 loadMessages(
@@ -91,11 +98,14 @@ function App() {
                     })) || []
                 );
             }
+            setIsConversationLoading(false);
         },
         [activeConversationId, loadConversation, loadMessages, closeSidebar]
     );
 
     const handleNewChat = useCallback(() => {
+        selectionRequestId.current += 1;
+        setIsConversationLoading(false);
         setActiveConversationId(null);
         setActiveTitle(null);
         clearMessages();
@@ -104,8 +114,8 @@ function App() {
 
     const handleDeleteConversation = useCallback(
         async (id: string) => {
-            await removeConversation(id);
-            if (id === activeConversationId) {
+            const removed = await removeConversation(id);
+            if (removed && id === activeConversationId) {
                 handleNewChat();
             }
         },
@@ -114,6 +124,8 @@ function App() {
 
     const handleUserChange = useCallback(
         (newUserId: string) => {
+            selectionRequestId.current += 1;
+            setIsConversationLoading(false);
             setUserId(newUserId);
             setActiveConversationId(null);
             setActiveTitle(null);
@@ -143,6 +155,8 @@ function App() {
                 userId={userId}
                 onUserChange={handleUserChange}
                 isOpen={isSidebarOpen}
+                isLoading={isConversationsLoading}
+                deletingIds={deletingIds}
             />
             <button
                 className={`sidebar-backdrop ${isSidebarOpen ? 'visible' : ''}`}
@@ -153,7 +167,7 @@ function App() {
             <ChatWindow
                 messages={messages}
                 isLoading={isLoading}
-                isStreaming={isStreaming}
+                isAwaitingResponse={isAwaitingResponse}
                 error={error}
                 reasoningText={reasoningText}
                 currentAgentType={currentAgentType}
@@ -162,6 +176,7 @@ function App() {
                 conversationTitle={activeTitle}
                 isSidebarOpen={isSidebarOpen}
                 onToggleSidebar={() => setIsSidebarOpen((isOpen) => !isOpen)}
+                isConversationLoading={isConversationLoading}
             />
         </div>
     );

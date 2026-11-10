@@ -10,6 +10,7 @@ interface MessageBubbleProps {
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     const isUser = message.role === 'user';
+    if (!isUser && !message.content) return null;
 
     const formatTime = (dateStr: string) => {
         try {
@@ -32,7 +33,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                     {isUser ? (
                         <p>{message.content}</p>
                     ) : (
-                        <ReactMarkdown>{message.content || '...'}</ReactMarkdown>
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
                     )}
                 </div>
                 <div className="message-meta">

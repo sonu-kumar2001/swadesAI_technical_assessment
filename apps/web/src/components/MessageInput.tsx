@@ -61,8 +61,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading })
                     onClick={handleSubmit}
                     disabled={!input.trim() || isLoading}
                     title="Send message"
+                    aria-label="Send message"
                 >
-                    ↑
+                    <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                        <path d="M10 15.5V4.75m0 0L5.75 9m4.25-4.25L14.25 9" />
+                    </svg>
                 </button>
             </div>
             <p className="input-hint">

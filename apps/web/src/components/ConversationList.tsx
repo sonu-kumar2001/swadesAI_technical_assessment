@@ -12,6 +12,8 @@ interface ConversationListProps {
     userId: string;
     onUserChange: (id: string) => void;
     isOpen: boolean;
+    isLoading: boolean;
+    deletingIds: string[];
 }
 
 const DEMO_USERS = [
@@ -29,6 +31,8 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     userId,
     onUserChange,
     isOpen,
+    isLoading,
+    deletingIds,
 }) => {
     return (
         <aside
@@ -48,17 +52,24 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                 </button>
             </div>
 
-            <div className="conversation-list">
+            <div className="conversation-list" aria-busy={isLoading}>
+                {isLoading && conversations.length === 0 && (
+                    <div className="conversation-list-loading" role="status">
+                        <span className="small-spinner" aria-hidden="true" />
+                        <span>Loading conversations</span>
+                    </div>
+                )}
                 {conversations.length === 0 ? (
-                    <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 'var(--font-size-sm)' }}>
+                    !isLoading && <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 'var(--font-size-sm)' }}>
                         No conversations yet
                     </div>
                 ) : (
                     conversations.map((conv) => (
                         <div
                             key={conv.id}
-                            className={`conversation-item ${conv.id === activeId ? 'active' : ''}`}
+                            className={`conversation-item ${conv.id === activeId ? 'active' : ''} ${deletingIds.includes(conv.id) ? 'deleting' : ''}`}
                             onClick={() => onSelect(conv.id)}
+                            aria-busy={deletingIds.includes(conv.id)}
                         >
                             <div className="conversation-item-content">
                                 <div className="conversation-item-title">
@@ -80,13 +91,15 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                             </div>
                             <button
                                 className="conversation-delete-btn"
+                                disabled={deletingIds.includes(conv.id)}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onDelete(conv.id);
                                 }}
                                 title="Delete conversation"
+                                aria-label={deletingIds.includes(conv.id) ? 'Deleting conversation' : 'Delete conversation'}
                             >
-                                ✕
+                                {deletingIds.includes(conv.id) ? <span className="small-spinner" aria-hidden="true" /> : '✕'}
                             </button>
                         </div>
                     ))
